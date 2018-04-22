@@ -1,0 +1,86 @@
+<html>
+<head>
+    <title>World Simulator</title>
+    <script>    
+        class Random {
+            static getRandomInt(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min)) + min;
+            }
+
+            static getRandomIntInclusive(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+        }
+
+        function setResult(text) {
+            document.getElementById("result").innerHTML = text;    
+        }
+    </script>
+    <script>
+            
+
+        const NUMBER_OF_PEOPLE = Math.pow(10,3);
+        const NUMBER_OF_TRANSACTIONS_PER_YER = 365 * NUMBER_OF_PEOPLE * 0.1;
+        const NUMBER_OF_YERS = 40;
+        const CAPITAL = 10;
+        var population = [];
+
+        class Talent {
+            constructor(inteligency, skills, effort) {
+                this.inteligency = inteligency;
+                this.skills = skills;
+                this.effort = effort;
+            }
+        }
+        
+        class Person {
+            constructor(number, talent) {
+                this.number = number;
+                this.talent = talent;
+                this.capital = CAPITAL;
+            }
+
+            makeBusiness(another) {
+                //alguem perde, o outro ganha
+                //ambos ganham
+                //ambos perdem
+            }
+        }
+
+
+        class World {
+            static createPopulation() {
+                for(var i=0; i < 10; i++) {
+                    var t0 = Random.getRandomIntInclusive(1,100);
+                    var t1 = Random.getRandomIntInclusive(1,100);
+                    var t2 = Random.getRandomIntInclusive(1,100);
+                    population.push(new Person(i, new Talent(t0,t1,t2)));
+                }
+            }
+
+            static getRandomPerson() {
+                const randomIndex = Random.getRandomIntInclusive(0,population.length-1);
+                return population[randomIndex];
+            }
+
+            static simulateOverYears() {
+                for (let year = 0; year < NUMBER_OF_YERS; year++) {
+                    for (let transaction = 0; transaction < NUMBER_OF_TRANSACTIONS_PER_YER; transaction++) {
+                        var pA = Random.getRandomPerson();
+                        var pB = Random.getRandomPerson();
+
+                        pA.makeBusiness(pB);
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="result"></div>
+</body>
+</html>
