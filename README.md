@@ -1,5 +1,4 @@
-This code is based on experiments descripted on [this BBC article]
-(http://www.bbc.com/capital/story/20180309-your-hard-work-doesnt-actually-pay-off). 
+This code is based on experiments descripted on [this BBC article](http://www.bbc.com/capital/story/20180309-your-hard-work-doesnt-actually-pay-off). 
 
 In brief, it reveals a sad reality: talented people can be hidden in a society with less opportunities. 
 
