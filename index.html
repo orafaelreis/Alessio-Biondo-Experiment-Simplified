@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>World Simulator</title>
+    <title>Talent vs Luck: the role of randomness in success and failure</title>
     <style>
         div.result {
             padding: 5px;
@@ -61,15 +61,16 @@
             }
 
             makeBusiness(that) {
-                this.lucky++; that.lucky++;
                 //Somebody wins, somebody loses.
                 if (this.talent.rawValue() > that.talent.rawValue()) {
                     this.capital++;
+                    this.lucky++;
                     that.capital--;
                 }
                 else if (this.talent.rawValue() < that.talent.rawValue()){
                     this.capital--;
-                    that.capital--;
+                    that.capital++;
+                    that.lucky++;
                 }
                 //others way to resolve that:
                 //both gain
@@ -144,17 +145,27 @@
     </script>
 </head>
 <body>  
+        <article>
+                <h1>Talent vs. Lucky</h1>
+                <p>This code is based on experiments descripted on <a href="http://www.bbc.com/capital/story/20180309-your-hard-work-doesnt-actually-pay-off">this BBC article</a>.</p>
+                <p>In brief, it demonstrates that lucky is also responsible for success. On the other hand, talented people can be hide in a society with less opportunity.</p>
+
+                <p>In this code, I used lucky to randomly chose 2 person in a business transaction. <br>
+                After several iterations, I selected two set: top successfull people and top talented people. <br>
+                The result confirms that lucky (opportunities) really cares.</p>
+        </article>
+
         <div class="result">
-            <h1>Top Successful</h1>
+            <h2>Top Successful</h2>
             <div id="result-first"></div>
         </div>
         <div class="result">
-            <h1>Top Talented</h1>
+            <h2>Top Talented</h2>
             <div id="result-second"></div>
         </div>
 </body>
     <script>
-        const NUMBER_OF_PEOPLE = 100000;
+        const NUMBER_OF_PEOPLE = 1000;
         const NUMBER_OF_TRANSACTIONS_PER_YER = 365 * NUMBER_OF_PEOPLE/100;
         const NUMBER_OF_YERS = 40;
         const NUMBER_OF_TRANSACTIONS = NUMBER_OF_TRANSACTIONS_PER_YER * NUMBER_OF_YERS;
