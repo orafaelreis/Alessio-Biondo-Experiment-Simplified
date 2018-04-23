@@ -1,6 +1,13 @@
 <html>
 <head>
     <title>World Simulator</title>
+    <style>
+        div.result {
+            padding: 5px;
+            float: left;
+            width: 45%;
+        }
+    </style>
     <script>    
         class Random {
             static getRandomInt(min, max) {
@@ -16,71 +23,147 @@
             }
         }
 
-        function setResult(text) {
-            document.getElementById("result").innerHTML = text;    
+        function setFirstResult(text) {
+            document.getElementById("result-first").innerHTML = text;    
+        }
+        function setSecondResult(text) {
+            document.getElementById("result-second").innerHTML = text;    
         }
     </script>
     <script>
-            
-
-        const NUMBER_OF_PEOPLE = Math.pow(10,3);
-        const NUMBER_OF_TRANSACTIONS_PER_YER = 365 * NUMBER_OF_PEOPLE * 0.1;
-        const NUMBER_OF_YERS = 40;
-        const CAPITAL = 10;
-        var population = [];
-
         class Talent {
             constructor(inteligency, skills, effort) {
                 this.inteligency = inteligency;
                 this.skills = skills;
                 this.effort = effort;
             }
+
+            rawValue() {
+                return this.inteligency + this.skills + this.effort;
+            }
         }
         
         class Person {
-            constructor(number, talent) {
+            constructor(number, talent, capital) {
                 this.number = number;
                 this.talent = talent;
-                this.capital = CAPITAL;
+                this.capital = capital;
+                this.lucky = 0;
             }
 
-            makeBusiness(another) {
-                //alguem perde, o outro ganha
-                //ambos ganham
-                //ambos perdem
+            toHTMLString() {
+                return '<div><b>number ' + this.number + '</b></div>' +
+                '<div>capital: ' + this.capital + '</div>' +
+                '<div>inteligency: ' + this.talent.inteligency + '</div>' +
+                '<div>skills: ' + this.talent.skills + '</div>' +
+                '<div>effort: ' + this.talent.effort + '</div>' +
+                '<div>lucky: ' + this.lucky + '</div>';
+            }
+
+            makeBusiness(that) {
+                this.lucky++; that.lucky++;
+                //Somebody wins, somebody loses.
+                if (this.talent.rawValue() > that.talent.rawValue()) {
+                    this.capital++;
+                    that.capital--;
+                }
+                else if (this.talent.rawValue() < that.talent.rawValue()){
+                    this.capital--;
+                    that.capital--;
+                }
+                //others way to resolve that:
+                //both gain
+                //both lose
             }
         }
 
 
         class World {
-            static createPopulation() {
-                for(var i=0; i < 10; i++) {
+            constructor() {
+                this.population = [];
+            }
+            createPopulation() {
+                for(var i=0; i < NUMBER_OF_PEOPLE; i++) {
                     var t0 = Random.getRandomIntInclusive(1,100);
                     var t1 = Random.getRandomIntInclusive(1,100);
                     var t2 = Random.getRandomIntInclusive(1,100);
-                    population.push(new Person(i, new Talent(t0,t1,t2)));
+                    var p = new Person(i, new Talent(t0,t1,t2), INITIAL_CAPITAL);
+                    this.population.push(p);
                 }
             }
 
-            static getRandomPerson() {
-                const randomIndex = Random.getRandomIntInclusive(0,population.length-1);
-                return population[randomIndex];
+            getRandomPerson() {
+                const randomIndex = Random.getRandomInt(0,this.population.length);
+                return this.population[randomIndex];
             }
 
-            static simulateOverYears() {
-                for (let year = 0; year < NUMBER_OF_YERS; year++) {
-                    for (let transaction = 0; transaction < NUMBER_OF_TRANSACTIONS_PER_YER; transaction++) {
-                        var pA = Random.getRandomPerson();
-                        var pB = Random.getRandomPerson();
-
+            simulateOverYears() {
+                for (let transaction = 0; transaction < NUMBER_OF_TRANSACTIONS; transaction++) {
+                    var pA = this.getRandomPerson();
+                    var pB = this.getRandomPerson();
+                    if (pA.number != pB.number) {
                         pA.makeBusiness(pB);
                     }
                 }
             }
+
+            getTopSuccessfullPeople( n ) {
+                var result = "";
+                this.population.sort(function(a,b){
+                    if(a.capital < b.capital) return 1;
+                    if(a.capital > b.capital) return -1;
+                    return 0;
+                });
+                
+                for (let i = 0; i < n; i++) {
+                    var person = this.population[i];
+                    result +=  (i+1) + '&ordm; place<br />'
+                    result += person.toHTMLString() +'<hr />';
+                }
+
+                setFirstResult(result);
+            }
+
+            getTopTaletedPeople( n ) {
+                var result = "";
+                this.population.sort(function(a,b){
+                    if (a.talent.rawValue() < b.talent.rawValue()) return 1;
+                    if (a.talent.rawValue() > b.talent.rawValue()) return -1;
+                    return 0;
+                });
+                
+                for (let i = 0; i < n; i++) {
+                    var person = this.population[i];
+                    result +=  (i+1) + '&ordm; place<br />'
+                    result += person.toHTMLString() +'<hr />';
+                }
+
+                setSecondResult(result);
+            }
         }
     </script>
 </head>
-<body>
-    <div id="result"></div>
+<body>  
+        <div class="result">
+            <h1>Top Successful</h1>
+            <div id="result-first"></div>
+        </div>
+        <div class="result">
+            <h1>Top Talented</h1>
+            <div id="result-second"></div>
+        </div>
 </body>
+    <script>
+        const NUMBER_OF_PEOPLE = 100000;
+        const NUMBER_OF_TRANSACTIONS_PER_YER = 365 * NUMBER_OF_PEOPLE/100;
+        const NUMBER_OF_YERS = 40;
+        const NUMBER_OF_TRANSACTIONS = NUMBER_OF_TRANSACTIONS_PER_YER * NUMBER_OF_YERS;
+        const INITIAL_CAPITAL = 10;
+
+        var w = new World();
+        w.createPopulation();
+        w.simulateOverYears();
+        w.getTopSuccessfullPeople(10);
+        w.getTopTaletedPeople(10);
+    </script>
 </html>
